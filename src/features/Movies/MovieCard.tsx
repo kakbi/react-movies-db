@@ -6,16 +6,19 @@ interface MovieCardProps {
     title: string;
     overview: string;
     popularity: number;
+    image?: string;
 }
 
-export function MovieCard({ id, title, overview, popularity }: MovieCardProps) {
+export function MovieCard({
+    id,
+    title,
+    overview,
+    popularity,
+    image = '/movie-thumb.png',
+}: MovieCardProps) {
     return (
         <div className={s.card}>
-            <img
-                className={s.thumbnail}
-                src="/movie-thumb.png"
-                alt="Movie thumbnail"
-            />
+            <img className={s.thumbnail} src={image} alt="Movie thumbnail" />
             <div className={s.content}>
                 <div>
                     <Link to={`/movies/${id}`}>{title}</Link>

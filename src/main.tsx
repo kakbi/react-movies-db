@@ -3,7 +3,7 @@ import './index.scss';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import About from './features/About/About.tsx';
-import Movies from './features/Movies/Movies.tsx';
+import { MoviesFetch } from './features/Movies/Movies.tsx';
 import { Provider } from 'react-redux';
 import store from './store.ts';
 
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/movies',
-                element: <Movies />,
+                element: <MoviesFetch />,
             },
         ],
     },

@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../store';
 import { MovieCard } from './MovieCard';
 
-import s from './Movies.module.scss';
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../hooks';
+import { Box, Container, LinearProgress, Typography } from '@mui/material';
 
 interface MoviesProps {
     movies: Movie[];
@@ -20,12 +20,26 @@ function Movies({ movies, loading }: MoviesProps) {
     }, [dispatch]);
 
     return (
-        <section>
-            <div className={s.list}>
-                {loading ? (
-                    <h3>Loading...</h3>
-                ) : (
-                    movies.map((m) => (
+        <Container sx={{ py: 8 }} maxWidth="lg">
+            <Typography variant="h4" align="center" gutterBottom>
+                Now playing
+            </Typography>
+
+            {loading ? (
+                <LinearProgress color="secondary" />
+            ) : (
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                        },
+                        gap: 4,
+                    }}
+                >
+                    {movies.map((m) => (
                         <MovieCard
                             key={m.id}
                             id={m.id}
@@ -34,10 +48,10 @@ function Movies({ movies, loading }: MoviesProps) {
                             popularity={m.popularity}
                             image={m.image}
                         />
-                    ))
-                )}
-            </div>
-        </section>
+                    ))}
+                </Box>
+            )}
+        </Container>
     );
 }
 

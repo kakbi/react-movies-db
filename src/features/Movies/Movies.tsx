@@ -1,63 +1,68 @@
-import { fetchMovies, type Movie } from '../../reducers/movies';
-import { connect } from 'react-redux';
-import type { RootState } from '../../store';
-import { MovieCard } from './MovieCard';
+import { fetchMovies, type Movie } from "../../reducers/movies";
+import { connect } from "react-redux";
+import type { RootState } from "../../store";
+import { MovieCard } from "./MovieCard";
 
-import { useEffect } from 'react';
-import { useAppDispatch } from '../../hooks';
-import { Box, Container, LinearProgress, Typography } from '@mui/material';
+import { useContext, useEffect } from "react";
+import { useAppDispatch } from "../../hooks";
+import { Box, Container, LinearProgress, Typography } from "@mui/material";
+import { anonymousUser, AuthContext } from "../../AuthContext";
 
 interface MoviesProps {
-    movies: Movie[];
-    loading: boolean;
+  movies: Movie[];
+  loading: boolean;
 }
 
 function Movies({ movies, loading }: MoviesProps) {
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(fetchMovies());
-    }, [dispatch]);
+  const { user } = useContext(AuthContext);
+  const loggedIn = user !== anonymousUser;
 
-    return (
-        <Container sx={{ py: 8 }} maxWidth="lg">
-            <Typography variant="h4" align="center" gutterBottom>
-                Now playing
-            </Typography>
+  useEffect(() => {
+    dispatch(fetchMovies());
+  }, [dispatch]);
 
-            {loading ? (
-                <LinearProgress color="secondary" />
-            ) : (
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            sm: 'repeat(2, 1fr)',
-                            md: 'repeat(3, 1fr)',
-                        },
-                        gap: 4,
-                    }}
-                >
-                    {movies.map((m) => (
-                        <MovieCard
-                            key={m.id}
-                            id={m.id}
-                            title={m.title}
-                            overview={m.overview}
-                            popularity={m.popularity}
-                            image={m.image}
-                        />
-                    ))}
-                </Box>
-            )}
-        </Container>
-    );
+  return (
+    <Container sx={{ py: 8 }} maxWidth="lg">
+      <Typography variant="h4" align="center" gutterBottom>
+        Now playing
+      </Typography>
+
+      {loading ? (
+        <LinearProgress color="secondary" />
+      ) : (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            },
+            gap: 4,
+          }}
+        >
+          {movies.map((m) => (
+            <MovieCard
+              key={m.id}
+              id={m.id}
+              title={m.title}
+              overview={m.overview}
+              popularity={m.popularity}
+              enableUserActions={loggedIn}
+              image={m.image}
+            />
+          ))}
+        </Box>
+      )}
+    </Container>
+  );
 }
 
 const mapStateToProps = (state: RootState) => ({
-    movies: state.movies.top,
-    loading: state.movies.loading,
+  movies: state.movies.top,
+  loading: state.movies.loading,
 });
 
 const connector = connect(mapStateToProps);

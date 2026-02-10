@@ -1,9 +1,9 @@
 import { fetchNextPage, resetMovies } from "../../reducers/movies";
 import { connect } from "react-redux";
 import type { RootState } from "../../store";
-import { MovieCard } from "./MovieCard";
+import MovieCard from "./MovieCard";
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Box, Container, LinearProgress } from "@mui/material";
 import { anonymousUser, AuthContext } from "../../AuthContext";
@@ -39,6 +39,15 @@ function Movies() {
     }
   }, [dispatch, entry?.isIntersecting, filters, hasMorePages]);
 
+  const handleAddToVaforite = useCallback(
+    (id: number) => {
+      alert(
+        `Not implemented! Action ${user.name} id adding movie ${id} to favorites.`,
+      );
+    },
+    [user.name],
+  );
+
   return (
     <Box
       sx={{
@@ -69,15 +78,16 @@ function Movies() {
               gap: 4,
             }}
           >
-            {movies.map((m) => (
+            {movies.map((m, i) => (
               <MovieCard
-                key={m.id}
+                key={`${m.id}-${i}`}
                 id={m.id}
                 title={m.title}
                 overview={m.overview}
                 popularity={m.popularity}
                 enableUserActions={loggedIn}
                 image={m.image}
+                onAddFavorite={handleAddToVaforite}
               />
             ))}
           </Box>

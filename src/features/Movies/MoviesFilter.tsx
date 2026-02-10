@@ -37,20 +37,21 @@ export function MoviesFilter({ onApply }: MoviesFilterProps) {
     },
   });
 
-  const fetchKeywords = useMemo(
-    () =>
-      debounce(async (query: string) => {
-        if (query) {
-          setKeywordsLoading(true);
+  const fetchKeywordsOptions = async (query: string) => {
+    if (query) {
+      setKeywordsLoading(true);
 
-          const options = await client.getKeywords(query);
+      const options = await client.getKeywords(query);
 
-          setKeywordsLoading(false);
-          setKeywordsOptions(options);
-        } else {
-          setKeywordsOptions([]);
-        }
-      }, 1000),
+      setKeywordsLoading(false);
+      setKeywordsOptions(options);
+    } else {
+      setKeywordsOptions([]);
+    }
+  };
+
+  const debouncedFetchKeywordsOptions = useMemo(
+    () => debounce(fetchKeywordsOptions, 1000),
     [],
   );
 
@@ -79,7 +80,9 @@ export function MoviesFilter({ onApply }: MoviesFilterProps) {
                 renderInput={(params) => (
                   <TextField {...params} label="Keywords" />
                 )}
-                onInputChange={(_, value) => fetchKeywords(value)}
+                onInputChange={(_, value) =>
+                  debouncedFetchKeywordsOptions(value)
+                }
               />
             )}
           />

@@ -8,11 +8,14 @@ import "./index.scss";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./features/About/About.tsx";
-import Movies from "./features/Movies/Movies.tsx";
 import { Provider } from "react-redux";
 import store from "./store.ts";
 import Home from "./features/Home/Home.tsx";
 import { ErrorBoundary } from "./ErrorBoundary.tsx";
+import { lazy, Suspense } from "react";
+import { LinearProgress } from "@mui/material";
+
+const Movies = lazy(() => import("./features/Movies/Movies.tsx"));
 
 function AppEntryPoint() {
   return (
@@ -36,7 +39,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/movies",
-        element: <Movies />,
+        element: (
+          <Suspense fallback={<LinearProgress sx={{ mt: 1 }} />}>
+            <Movies />
+          </Suspense>
+        ),
       },
     ],
   },

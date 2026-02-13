@@ -8,13 +8,18 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
+import { rickandmortyApi } from "./services/rickandmorty";
 
 const store = configureStore({
   reducer: {
     [tmdbApi.reducerPath]: tmdbApi.reducer,
+    [rickandmortyApi.reducerPath]: rickandmortyApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(tmdbApi.middleware),
+    getDefaultMiddleware().concat(
+      tmdbApi.middleware,
+      rickandmortyApi.middleware,
+    ),
 });
 
 setupListeners(store.dispatch);

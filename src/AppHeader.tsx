@@ -23,6 +23,8 @@ export function AppHeader({ onLogin, onLogout }: AppHeaderProps) {
 
             <HeaderLink to={"/about"}>About</HeaderLink>
 
+            <HeaderLink to="/extra">Extra</HeaderLink>
+
             <HeaderLink to={"/movies"}>Movies</HeaderLink>
           </nav>
         </Box>

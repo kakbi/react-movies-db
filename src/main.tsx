@@ -15,16 +15,23 @@ import { ErrorBoundary } from "./ErrorBoundary.tsx";
 import { lazy, Suspense } from "react";
 import { LinearProgress } from "@mui/material";
 import { Extra } from "./features/Extra/Extra.tsx";
+import { StatefulAuthProvider } from "./auth/StatefulAuthProvider.tsx";
+import { AuthCallback } from "./auth/AuthCallback.tsx";
+import { Profile } from "./features/Profile/Profile.tsx";
+import { AuthenticatedGuard } from "./auth/AuthenticationGuard.tsx";
+import { Protected } from "./features/Protected.tsx";
 
 const Movies = lazy(() => import("./features/Movies/Movies.tsx"));
 
 function AppEntryPoint() {
   return (
-    <Provider store={store}>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </Provider>
+    <StatefulAuthProvider>
+      <Provider store={store}>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </Provider>
+    </StatefulAuthProvider>
   );
 }
 
@@ -49,6 +56,18 @@ const router = createBrowserRouter([
             <Movies />
           </Suspense>
         ),
+      },
+      {
+        path: "/callback",
+        element: <AuthCallback />,
+      },
+      {
+        path: "/profile",
+        element: <AuthenticatedGuard component={Profile} />,
+      },
+      {
+        path: "/protected",
+        element: <AuthenticatedGuard component={Protected} />,
       },
     ],
   },

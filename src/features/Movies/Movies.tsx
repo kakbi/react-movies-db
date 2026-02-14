@@ -1,7 +1,6 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Box, Container, LinearProgress, Typography } from "@mui/material";
-import { anonymousUser, AuthContext } from "../../AuthContext";
 import { useIntersectionObserver } from "../../hooks/useIntersecionObserver";
 import { MoviesFilter } from "./MoviesFilter";
 import MovieCard from "./MovieCard";
@@ -11,6 +10,7 @@ import {
   type MoviesFilters,
   type MoviesQuery,
 } from "../../services/tmdb";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const initialQuery: MoviesQuery = {
   page: 1,
@@ -18,10 +18,13 @@ const initialQuery: MoviesQuery = {
 };
 
 function Movies() {
+  const { user, isAuthenticated } = useAuth0();
+
   const [query, setQuery] = useState<MoviesQuery>(initialQuery);
 
   const { data: configuration } = useGetConfigurationQuery();
   const { data, isFetching } = useGetMoviesQuery(query);
+
   const movies = data?.results ?? [];
   const hasMorePages = data?.hasMorePages;
 
@@ -31,24 +34,21 @@ function Movies() {
       : undefined;
   }
 
-  const { user } = useContext(AuthContext);
-  const loggedIn = user !== anonymousUser;
-
   const onIntersect = useCallback(() => {
-    if (hasMorePages) {
+    if (hasMorePages && !isFetching) {
       setQuery((q) => ({ ...q, page: q.page + 1 }));
     }
-  }, [hasMorePages]);
+  }, [hasMorePages, isFetching]);
 
   const [targerRef] = useIntersectionObserver({ onIntersect });
 
   const handleAddToVaforite = useCallback(
     (id: number): void => {
       alert(
-        `Not implemented! Action ${user.name} id adding movie ${id} to favorites.`,
+        `Not implemented! Action ${user?.name} id adding movie ${id} to favorites.`,
       );
     },
-    [user.name],
+    [user?.name],
   );
 
   return (
@@ -100,7 +100,7 @@ function Movies() {
                 title={m.title}
                 overview={m.overview}
                 popularity={m.popularity}
-                enableUserActions={loggedIn}
+                enableUserActions={isAuthenticated}
                 image={formatImageUrl(m.backdrop_path)}
                 onAddFavorite={handleAddToVaforite}
               />
@@ -116,12 +116,3 @@ function Movies() {
 }
 
 export default Movies;
-
-// const mapStateToProps = (state: RootState) => ({
-//   movies: state.movies.top,
-//   loading: state.movies.loading,
-// });
-
-// const connector = connect(mapStateToProps);
-
-// export default connector(Movies);
